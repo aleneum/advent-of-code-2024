@@ -21,21 +21,27 @@ def get_input(day: int) -> list[str]:
 PARSER_MAP = {
     r"(\d+)": int,
     r"(\d+\.\d+)": float,
-    r"(\w+)": str,
 }
 
-def parse_input(
-    day: int,
-    *pattern: list[str]
-) -> list[list[any]]:
 
-    parser = [PARSER_MAP[p] if p in PARSER_MAP else str for p in pattern if p.startswith("(")]
+def parse_data(data: list[str], *pattern: list[str]) -> list:
+    parser = [
+        PARSER_MAP[p] if p in PARSER_MAP else str for p in pattern if p.startswith("(")
+    ]
     matcher = re.compile(r"".join(pattern))
     res = [[] for _ in range(len(parser))]
-    for line in get_input(day):
+    for line in data:
         m = matcher.match(line)
         for i, p in enumerate(parser):
             res[i].append(p(m.group(i + 1)))
     return res
-        
 
+
+def parse_input(day: int, *pattern: list[str]) -> list:
+    return parse_data(get_input(day), *pattern)
+
+
+def parse_test(day: int, *pattern: list[str]) -> list:
+    path = Path(__file__).parent.parent / str(day).zfill(2) / "test.txt"
+    assert path.exists()
+    return parse_data(path.read_text("utf-8").splitlines(), *pattern)
