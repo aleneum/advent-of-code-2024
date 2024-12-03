@@ -7,7 +7,7 @@ import re
 load_dotenv(Path(__file__).parent.parent / ".env")
 
 
-def get_input(day: int) -> list[str]:
+def get_input(day: int) -> str:
     path = Path(__file__).parent.parent / str(day).zfill(2) / "input.txt"
     if not path.exists():
         data = requests.get(
@@ -15,7 +15,7 @@ def get_input(day: int) -> list[str]:
             cookies={"session": os.getenv("AOC_SESSION")},
         ).text
         path.write_text(data, encoding="utf-8")
-    return path.read_text("utf-8").splitlines()
+    return path.read_text("utf-8")
 
 
 PARSER_MAP = {
@@ -38,7 +38,7 @@ def parse_data(data: list[str], *pattern: list[str]) -> list:
 
 
 def parse_input(day: int, *pattern: list[str]) -> list:
-    return parse_data(get_input(day), *pattern)
+    return parse_data(get_input(day).splitlines(), *pattern)
 
 
 def parse_test(day: int, *pattern: list[str]) -> list:
