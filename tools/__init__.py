@@ -3,6 +3,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 import re
+import time
+import logging
 
 load_dotenv(Path(__file__).parent.parent / ".env")
 
@@ -45,3 +47,14 @@ def parse_test(day: int, *pattern: list[str]) -> list:
     path = Path(__file__).parent.parent / str(day).zfill(2) / "test.txt"
     assert path.exists()
     return parse_data(path.read_text("utf-8").splitlines(), *pattern)
+
+
+def profile(func):
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+    def wrap(*args, **kwargs):
+        started_at = time.time()
+        result = func(*args, **kwargs)
+        logging.info(time.time() - started_at)
+        return result
+
+    return wrap
